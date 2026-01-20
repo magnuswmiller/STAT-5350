@@ -126,9 +126,10 @@ def main(image, source_lang, target_lang, audio_output, debug, psm, ret_conf):
     if ret_conf:
         avg_conf = raw_info[1]
 
+    '''
     # TODO: Parse and Clean Raw Text
     print("Parsing and Cleaning Routine:")
-    raw_title, author, year, raw_desc = clean_text()
+    author, life_info, raw_title, year, raw_med, raw_source, raw_desc = clean_text()
 
     # TODO: Cleaned Text Translation
     # Text translation
@@ -145,6 +146,7 @@ def main(image, source_lang, target_lang, audio_output, debug, psm, ret_conf):
     #TODO: Output .wav File to Output Directory if Requested
     print("Audio Output Routine:")
     audio_output()
+    '''
     
 
 if __name__ == "__main__":

@@ -80,10 +80,11 @@ Args:
     debug [bool] - Prints average confidence level
 '''
 def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
+    custom_config = r'--oem 3 --psm 4'
     if ret_conf:
         # Get detailed image data
-        print("* Running OCR.")
-        img_data = pytesseract.image_to_data(pil_img, lang=source_lang, output_type=pytesseract.Output.DICT)
+        print("* Running OCR with --oem 3 --psm 4.")
+        img_data = pytesseract.image_to_data(pil_img, config=custom_config, lang=source_lang, output_type=pytesseract.Output.DICT)
 
         text_lines = []
         confidences = []
