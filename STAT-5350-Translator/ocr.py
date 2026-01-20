@@ -10,7 +10,7 @@ Author:
     Magnus Miller
 
 Date Last Updated:
-    01/19/26
+    01/20/26
 '''
 
 # Import Libraries
@@ -128,7 +128,6 @@ def extract_itt(source_path: str,
                 ) -> Union[str, Tuple[str, float]]:
     
     # Pre-process source image
-    print("Image Pre-Processing Routine:")
     pre_pro_img = img_pre_pro(source_path, debug)
 
     # Convert pre-processed image to PIL
