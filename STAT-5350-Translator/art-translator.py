@@ -159,35 +159,39 @@ def pdf_output(author: str,
     print("\t* Creating PDF file.")
     pdf_out = FPDF()
     pdf_out.add_page()
+    pdf_out.add_font(family="D-DIN", style='', fname="D-DIN.ttf")  # uni=True enables Unicode
+    pdf_out.add_font(family="D-DIN", style='B', fname="D-DIN-Bold.ttf")  # uni=True enables Unicode
+    pdf_out.add_font(family="D-DIN", style='I', fname="D-DIN-Italic.ttf")  # uni=True enables Unicode
+    pdf_out.set_margins(left=1.0, right=1.0, top=1.0)
 
     print("\t* Writing PDF output.")
     # Create Author Cell
-    pdf_out.set_font(family="Arial", style="BI", size=20)
-    pdf_out.cell(200, 10, txt=author, ln=1)
+    pdf_out.set_font(family="D-DIN", style="B", size=20)
+    pdf_out.cell(200, 10, text=author, new_x='LEFT', new_y='NEXT')
     
     # Create Life Info Cell
-    pdf_out.set_font(family="Arial", style="", size=15)
-    pdf_out.cell(200, 10, trans_life_info, ln=2)
+    pdf_out.set_font(family="D-DIN", style="", size=15)
+    pdf_out.cell(200, 10, trans_life_info, new_x='LEFT', new_y='NEXT')
 
     # Create Title Cell
-    pdf_out.set_font(family="Arial", style="BI", size=20)
-    pdf_out.cell(200, 10, txt=trans_title, ln=3)
+    pdf_out.set_font(family="D-DIN", style="B", size=20)
+    pdf_out.cell(200, 10, text=trans_title, new_x='LEFT', new_y='NEXT')
 
     # Create Year Cell
-    pdf_out.set_font(family="Arial", style="I", size=15)
-    pdf_out.cell(200, 10, txt=year, ln=4)
+    pdf_out.set_font(family="D-DIN", style="I", size=15)
+    pdf_out.cell(200, 10, text=year, new_x='LEFT', new_y='NEXT')
 
     # Create Medium Cell
-    pdf_out.set_font(family="Arial", style="I", size=12)
-    pdf_out.cell(200, 10, txt=trans_medium, ln=5)
+    pdf_out.set_font(family="D-DIN", style="I", size=12)
+    pdf_out.cell(200, 10, text=trans_medium, new_x='LEFT', new_y='NEXT')
 
     # Create Source Cell
-    pdf_out.set_font(family="Arial", style="I", size=12)
-    pdf_out.cell(200, 10, txt=trans_source, ln=6)
+    pdf_out.set_font(family="D-DIN", style="I", size=12)
+    pdf_out.cell(200, 10, text=trans_source, new_x='LEFT', new_y='NEXT')
 
     # Create Description Cell
-    pdf_out.set_font(family="Arial", style="", size=15)
-    pdf_out.cell(200, 10, txt=trans_desc, ln=4)
+    pdf_out.set_font(family="D-DIN", style="", size=15)
+    pdf_out.multi_cell(200, 10, text=trans_desc, new_x='LEFT', new_y='NEXT')
 
     # Save PDF output
     print("\t* Saving translated description PDF to /Output_Files/Translated_Desc.pdf for review.")
