@@ -80,11 +80,12 @@ Args:
     debug [bool] - Prints average confidence level
 '''
 def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
-    custom_config = r'--oem 3 --psm 4'
-    if ret_conf:
+    # custom_config = r'--oem 3 --psm 4'
+    
+    if ret_conf == True:
         # Get detailed image data
         print("* Running OCR with --oem 3 --psm 4.")
-        img_data = pytesseract.image_to_data(pil_img, config=custom_config, lang=source_lang, output_type=pytesseract.Output.DICT)
+        img_data = pytesseract.image_to_data(pil_img, lang=source_lang, output_type=pytesseract.Output.DICT)
 
         text_lines = []
         confidences = []
@@ -92,17 +93,16 @@ def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
         # Extract text and confidences
         print("* Extracting data from image.")
         for i in range(len(img_data["text"])):
-            if int(img_data["conf"][i]) != -1 and img_data["text"][i].strip():
+            if int(img_data["conf"][i]) != -1 and img_data["text"][i]:
                 text_lines.append(img_data["text"][i])
                 confidences.append(float(img_data["conf"][i]))
-        
-        extracted_text = " ".join(text_lines).strip()
+        extracted_text = " ".join(text_lines)
         avg_conf = sum(confidences) / len(confidences) if confidences else 0.0
 
         return [extracted_text, avg_conf]
     else:
         print("* Running OCR.")
-        extracted_text = pytesseract.image_to_string(pil_img, lang=source_lang).strip()
+        extracted_text = pytesseract.image_to_string(pil_img, lang=source_lang)
 
         return [extracted_text, None]
 
@@ -125,7 +125,6 @@ def extract_itt(source_path: str,
                 source_lang: str,
                 debug: bool = False,
                 ret_conf: bool = False,
-                psm: int = 6,
                 ) -> Union[str, Tuple[str, float]]:
     
     # Pre-process source image
@@ -143,4 +142,4 @@ def extract_itt(source_path: str,
     if ret_conf:
         return extracted_text, avg_conf
     else:
-        return extracted_text
+        return extracted_text, avg_conf
