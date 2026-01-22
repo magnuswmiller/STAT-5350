@@ -54,12 +54,12 @@ def parse_text(raw_text: str, debug: bool):
     # Check if text has been passed
     if not raw_text.strip():
         if debug:
-            print("* No text provided to parse and clean.")
+            print("\t* No text provided to parse and clean.")
         return information
     
     lines = [line.strip() for line in raw_text.split('\n')]
     
-    print("* Parsing extracted text.")
+    print("\t* Parsing extracted text.")
     last_line_blank = True
     for i in range(len(lines)):
         if lines[i] != '':
@@ -91,7 +91,7 @@ def parse_text(raw_text: str, debug: bool):
             last_line_blank = True
 
     if all(value != '' for value in information.values()):
-        print("* Successfully parsed extracted text. All fields collected.")
+        print("\t* Successfully parsed extracted text. All fields collected.")
         information['parse_success'] = True
 
     return information

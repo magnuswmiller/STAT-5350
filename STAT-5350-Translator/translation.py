@@ -32,7 +32,7 @@ def get_trans_pipe(source_lang: str,
 
     if _translator is None:
         try:
-            print(f"* Loading translation model: {model}.")
+            print(f"\t* Loading translation model: {model}.")
             _translator = pipeline("translation", model=model, tokenizer=model, device=0 if torch.cuda.is_available() else -1)
         except Exception as e:
             print(f"Model {model} not found or failed to load: {e}")
@@ -46,16 +46,16 @@ def translate(raw_text: str,
               max_len: int = 512
               ) -> str:
     # Define Model to translate using
-    print("* Defining translation model.")
+    print("\t* Defining translation model.")
     model = f"Helsinki-NLP/opus-mt-{source_lang}-{target_lang}"
 
     # Check text input
     if not raw_text.strip():
-        print("* No text passed to translate.")
+        print("\t* No text passed to translate.")
         return ""
 
     # Build translator
-    print("* Building translator.")
+    print("\t* Building translator.")
     translator = get_trans_pipe(source_lang, target_lang, model)
 
     # Translate text
@@ -71,11 +71,11 @@ def translate(raw_text: str,
         tgt_lang_token = lang_map.get(target_lang, f"{target_lang}_Latn")
         result = translator(raw_text, max_length=max_len, forced_bos_token_id=translator.tokenizer.lang_code_to_id(tgt_lang_token))
     else:
-        print("* Translating text.")
+        print("\t* Translating text.")
         result = translator(raw_text, max_len)
 
     # Clean output
-    print("* Cleaning translated ouput.")
+    print("\t* Cleaning translated ouput.")
     trans_text = result[0]["translation_text"].strip()
 
     return trans_text

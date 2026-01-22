@@ -45,24 +45,24 @@ def img_pre_pro(source_path: str,
     pre_pro_img = cv2.imread(source_path)
     if pre_pro_img is None:
         raise ValueError("Image failed to load.")
-    print("* Image successfully loaded.")
+    print("\t* Image successfully loaded.")
 
     # Convert image to grayscale
     gray_img = cv2.cvtColor(pre_pro_img, cv2.COLOR_BGR2GRAY)
-    print("* Image converted to grayscale.")
+    print("\t* Image converted to grayscale.")
 
     # Apply Gaussian blur
     gauss_img = cv2.GaussianBlur(gray_img, (3, 3), 0)
-    print("* Gaussian blur applied.")
+    print("\t* Gaussian blur applied.")
 
     # Apply thresholding
     thresh_img = cv2.threshold(gauss_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-    print("* Image thresholding applied.")
+    print("\t* Image thresholding applied.")
 
     # Handle returns
     if debug:
         cv2.imwrite(os.getcwd() + "/Debug_Files/debug_preprocessed.png", thresh_img)
-        print("* Saved debug_preprocessed.png for inspection.")
+        print("\t* Saved debug_preprocessed.png for inspection.")
 
     return thresh_img
 
@@ -84,14 +84,14 @@ def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
     
     if ret_conf == True:
         # Get detailed image data
-        print("* Running OCR with --oem 3 --psm 4.")
+        print("\t* Running OCR with --oem 3 --psm 4.")
         img_data = pytesseract.image_to_data(pil_img, lang=source_lang, output_type=pytesseract.Output.DICT)
 
         text_lines = []
         confidences = []
 
         # Extract text and confidences
-        print("* Extracting data from image.")
+        print("\t* Extracting data from image.")
         for i in range(len(img_data["text"])):
             if int(img_data["conf"][i]) != -1 and img_data["text"][i]:
                 text_lines.append(img_data["text"][i])
@@ -101,7 +101,7 @@ def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
 
         return [extracted_text, avg_conf]
     else:
-        print("* Running OCR.")
+        print("\t* Running OCR.")
         extracted_text = pytesseract.image_to_string(pil_img, lang=source_lang)
 
         return [extracted_text, None]
@@ -131,11 +131,10 @@ def extract_itt(source_path: str,
     pre_pro_img = img_pre_pro(source_path, debug)
 
     # Convert pre-processed image to PIL
-    print("* Converting image array to PIL")
+    print("\t* Converting image array to PIL")
     pil_img = Image.fromarray(pre_pro_img)
 
     # Run OCR
-    print("Image OCR Routine:")
     extracted_text, avg_conf = run_ocr(source_lang, pil_img, ret_conf)
 
     # Handle Returns
