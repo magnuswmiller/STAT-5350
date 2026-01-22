@@ -10,7 +10,7 @@ Author:
     Magnus Miller
 
 Date Last Updated:
-    01/20/26
+    01/22/26
 '''
 
 # Import Libraries
@@ -19,23 +19,22 @@ import numpy as np
 import cv2
 import pytesseract
 from PIL import Image
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
 
 '''
 img_pre_pro()
-Description: This function handles the pre-processing for OCR. This function converts the image to
-             grayscale, applies small gaussian blur.
+Description:
+    This function handles the pre-processing for OCR. This function converts the image to
+    grayscale, applies small gaussian blur, and applies thresholding for better OCR accuracy.
 Args:
-    source_path [str] - file path to image
-    debug [bool] - Debug saves intermediate images
+    source_path (str) - File path to image
+    debug (bool) - Debug saves intermediate images to Debug_Files directory
 Return:
-    Returns processed OpenCV image (BGR format)
+    np.ndarray - Processed OpenCV image array (grayscale with thresholding applied)
 '''
-
 def img_pre_pro(source_path: str,
-                   debug: bool = False
-                   ) -> np.ndarray:
+                debug: bool = False) -> np.ndarray:
 
     # Check if image exists
     if not os.path.exists(source_path):
@@ -70,17 +69,18 @@ def img_pre_pro(source_path: str,
 run_ocr()
 Description:
     This function handles running and interacting with the pytesseract ocr library. This
-    function will extract the text from the PIL image if no confidence level is requested.
-    If a confidence level is requested, the function will both extract the text from the PIL
-    image as well as calculate the average confidence level for each line.
+    function will extract the text from the PIL image. If confidence level is requested,
+    the function will both extract the text and calculate the average confidence level
+    for each line.
 Args:
-    pil_image [Image] - Pre-processed PIL image
-    ocr_config [str] - Custom configuration for OCR use
-    ret_conf [bool] - Returns text as well as confidence level
-    debug [bool] - Prints average confidence level
+    source_lang (str) - Language code for OCR (e.g., 'eng', 'fra', 'deu')
+    pil_img (Image) - Pre-processed PIL image
+    ret_conf (bool) - If True, returns text and confidence level; if False, returns text only
+Return:
+    List[Union[str, float]] - List containing [extracted_text, avg_conf] where avg_conf is
+                              float if ret_conf=True, or None if ret_conf=False
 '''
-def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
-    # custom_config = r'--oem 3 --psm 4'
+def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False) -> List[Union[str, float]]:
     
     if ret_conf == True:
         # Get detailed image data
@@ -108,24 +108,24 @@ def run_ocr(source_lang: str, pil_img: Image, ret_conf: bool = False):
 
 '''
 extract_itt()
-Description: This function uses the tesseract ocr library to handle converting the provided
-             image to text. The function serves as a driver and preprocesses the image before
-             using the library.
+Description:
+    This function uses the tesseract ocr library to handle converting the provided
+    image to text. The function serves as a driver and preprocesses the image before
+    using the library.
 Args:
-    source_path [str] - file path to image
-    source_lang [str] - language of source text (Def: "eng")
-    psm [int] - Page Segmentation Mode (3-13)
-    debug [bool] - Debug mode saves intermediate images
-    ret_conf [bool] - Returns text as well as confidence level
+    source_path (str) - File path to image
+    source_lang (str) - Language of source text (e.g., 'eng', 'fra', 'deu')
+    debug (bool) - Debug mode saves intermediate images to Debug_Files directory
+    ret_conf (bool) - If True, returns text and confidence level; if False, returns text only
 Return:
-    Returns extracted text (str) or extracted text and confidence if requested (str, float)
-    as tuple.
+    Tuple[str, float] - Tuple containing (extracted_text, avg_conf) where avg_conf is the
+                        average confidence level as a float (0-100) if ret_conf=True, or 0.0
+                        if ret_conf=False
 '''
 def extract_itt(source_path: str,
                 source_lang: str,
                 debug: bool = False,
-                ret_conf: bool = False,
-                ) -> Union[str, Tuple[str, float]]:
+                ret_conf: bool = False) -> Tuple[str, float]:
     
     # Pre-process source image
     pre_pro_img = img_pre_pro(source_path, debug)

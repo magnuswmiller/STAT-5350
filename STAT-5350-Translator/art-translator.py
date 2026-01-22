@@ -9,14 +9,14 @@ Author:
     Magnus Miller
 
 Date Last Updated:
-    01/20/26
+    01/22/26
 '''
 
 # Import Libraries
 import argparse
 import os
 from fpdf import FPDF
-from typing import Union, Tuple
+from typing import Union, Tuple, Dict, Any
 
 # Import Files
 from ocr import extract_itt
@@ -24,6 +24,19 @@ from translation import translate
 from tts import create_wav
 from parser import parse_text
 
+'''
+lang_converter()
+Description:
+    Converts language names or short codes to appropriate ISO codes for OCR or translation.
+    Supports both 2-letter codes (for translation) and 3-letter codes (for OCR).
+Args:
+    mode (str) - Either 'ocr' or 'trans' to specify which code format to return
+    source (str) - Source language name or code
+    target (str, optional) - Target language name or code (only for 'trans' mode)
+Return:
+    str - OCR language code (3-letter) if mode is 'ocr'
+    Tuple[str, str] - Tuple of (source, target) translation codes (2-letter) if mode is 'trans'
+'''
 def lang_converter(mode: str, source: str, target: str = None) -> Union[str, Tuple[str, str]]:
     # Mapping from common names/short codes to ISO 2-letter (for trans) and 3-letter (for ocr)
     lang_map = {
@@ -61,7 +74,7 @@ def lang_converter(mode: str, source: str, target: str = None) -> Union[str, Tup
         'ru': {'trans': 'ru', 'ocr': 'rus'},
     }
     
-    def normalize_lang(user_lang: str) -> dict:
+    def normalize_lang(user_lang: str) -> Dict[str, str]:
         low_lang = user_lang.lower().strip()
         if low_lang in lang_map:
             return lang_map[low_lang]
@@ -86,10 +99,23 @@ def lang_converter(mode: str, source: str, target: str = None) -> Union[str, Tup
     else:
         raise ValueError(f"Invalid mode: {mode}. Use 'ocr' or 'trans'.")
 
+'''
+text_extract()
+Description:
+    Extracts text from an image using OCR (Optical Character Recognition).
+    Optionally returns confidence level of the extraction.
+Args:
+    source_path (str) - Path to the source image file
+    source_lang (str) - Language code for OCR (default: "eng")
+    debug (bool) - If True, prints extracted text and confidence to console
+    ret_conf (bool) - If True, calculates and returns average confidence level
+Return:
+    Tuple[str, float] - Extracted text and average confidence level (or 0.0 if not requested)
+'''
 def text_extract(source_path: str,
                  source_lang: str = "eng",
                  debug: bool = True,
-                 ret_conf: bool = False):
+                 ret_conf: bool = False) -> Tuple[str, float]:
     extracted_text, avg_conf = extract_itt(source_path, source_lang, debug, ret_conf)
 
     if ret_conf == True and debug == True:
@@ -103,17 +129,42 @@ def text_extract(source_path: str,
 
     return extracted_text, avg_conf
 
-def clean_text(raw_text: str, debug: bool):
+'''
+clean_text()
+Description:
+    Parses raw OCR-extracted text into structured fields for museum plaque information.
+Args:
+    raw_text (str) - Raw text extracted from OCR
+    debug (bool) - If True, prints parsing information
+Return:
+    Dict[str, Any] - Dictionary containing parsed fields (author, title, year, etc.)
+'''
+def clean_text(raw_text: str, debug: bool) -> Dict[str, Any]:
     information = parse_text(raw_text, debug)
     return information
 
+'''
+translate_text()
+Description:
+    Translates all fields of the museum plaque from source language to target language.
+Args:
+    raw_life_info (str) - Artist's life information (birth-death dates)
+    raw_title (str) - Title of the artwork
+    raw_medium (str) - Medium/materials used
+    raw_source (str) - Source/credit line
+    raw_desc (str) - Description of the artwork
+    source_lang (str) - Source language code
+    target_lang (str) - Target language code
+Return:
+    Tuple[str, str, str, str, str] - Tuple of all translated fields in order
+'''
 def translate_text(raw_life_info: str,
                    raw_title: str,
                    raw_medium: str,
                    raw_source: str,
                    raw_desc: str,
                    source_lang: str,
-                   target_lang: str):
+                   target_lang: str) -> Tuple[str, str, str, str, str]:
 
     print("\t* Translating life info.")
     trans_life_info = translate(raw_life_info, source_lang, target_lang)
@@ -127,13 +178,28 @@ def translate_text(raw_life_info: str,
     trans_desc = translate(raw_desc, source_lang, target_lang)
     return trans_life_info, trans_title, trans_medium, trans_source, trans_desc
 
+'''
+cli_output()
+Description:
+    Prints the translated plaque information to the command line interface.
+Args:
+    author (str) - Artist's name
+    trans_life_info (str) - Translated life information
+    trans_title (str) - Translated artwork title
+    year (str) - Year the artwork was created
+    trans_medium (str) - Translated medium information
+    trans_source (str) - Translated source/credit line
+    trans_desc (str) - Translated description
+Return:
+    int - Returns -1 to indicate completion
+'''
 def cli_output(author: str,
                trans_life_info: str,
                trans_title: str,
                year: str,
                trans_medium: str,
                trans_source: str,
-               trans_desc: str):
+               trans_desc: str) -> int:
 
     print("\n\n\n\n\n")
     print("---------- Translation ----------")
@@ -147,6 +213,22 @@ def cli_output(author: str,
 
     return -1
 
+'''
+pdf_output()
+Description:
+    Creates a PDF file containing the translated plaque information with proper formatting.
+Args:
+    author (str) - Artist's name
+    trans_life_info (str) - Translated life information
+    trans_title (str) - Translated artwork title
+    year (str) - Year the artwork was created
+    trans_medium (str) - Translated medium information
+    trans_source (str) - Translated source/credit line
+    trans_desc (str) - Translated description
+    output_path (str) - Directory path where PDF will be saved
+Return:
+    int - Returns -1 to indicate completion
+'''
 def pdf_output(author: str,
                trans_life_info: str,
                trans_title: str,
@@ -154,14 +236,14 @@ def pdf_output(author: str,
                trans_medium: str,
                trans_source: str,
                trans_desc: str,
-               output_path):
+               output_path: str) -> int:
     # Creating PDF
     print("\t* Creating PDF file.")
     pdf_out = FPDF()
     pdf_out.add_page()
-    pdf_out.add_font(family="D-DIN", style='', fname="D-DIN.ttf")  # uni=True enables Unicode
-    pdf_out.add_font(family="D-DIN", style='B', fname="D-DIN-Bold.ttf")  # uni=True enables Unicode
-    pdf_out.add_font(family="D-DIN", style='I', fname="D-DIN-Italic.ttf")  # uni=True enables Unicode
+    pdf_out.add_font(family="D-DIN", style='', fname="D-DIN.ttf")
+    pdf_out.add_font(family="D-DIN", style='B', fname="D-DIN-Bold.ttf")
+    pdf_out.add_font(family="D-DIN", style='I', fname="D-DIN-Italic.ttf")
     pdf_out.set_margins(left=1.0, right=1.0, top=1.0)
 
     print("\t* Writing PDF output.")
@@ -199,19 +281,43 @@ def pdf_output(author: str,
 
     return -1
 
-def audio_output():
+'''
+audio_output()
+Description:
+    Creates an audio file (.wav) of the translated description (currently not implemented).
+Args:
+    None
+Return:
+    int - Returns -1 to indicate completion
+'''
+def audio_output() -> int:
     create_wav()
     return -1
 
-def main(image, source_lang, target_lang, audio_output, debug, ret_conf, cli, pdf):
-    # Input Verification
-    '''
-    Need to verify input language is supported by translation
-    Need to verify output language is supported by translation
-    Need to verify output language is supported by TTS if requested
-    Need Caches for OCR supported Languages
-    Need Cache for Translate supported Languages
-    '''
+'''
+main()
+Description:
+    Main driver function that orchestrates the entire translation pipeline from OCR to output.
+Args:
+    image (str) - Path to the image file containing the plaque
+    source_lang (str) - Source language of the plaque text
+    target_lang (str) - Target language for translation
+    audio_output (bool) - Whether to generate audio output
+    debug (bool) - Whether to enable debug mode
+    ret_conf (bool) - Whether to return OCR confidence levels
+    cli (bool) - Whether to print output to CLI
+    pdf (bool) - Whether to generate PDF output
+Return:
+    None
+'''
+def main(image: str, 
+         source_lang: str, 
+         target_lang: str, 
+         audio_output: bool, 
+         debug: bool, 
+         ret_conf: bool, 
+         cli: bool, 
+         pdf: bool) -> None:
     # Normalizing languages
     ocr_source = lang_converter('ocr', source_lang)
     trans_langs = lang_converter('trans', source_lang, target_lang)
@@ -242,13 +348,15 @@ def main(image, source_lang, target_lang, audio_output, debug, ret_conf, cli, pd
     # Text translation
     print("------------------------------")
     print("Text translation Routine:")
-    trans_life_info, trans_title, trans_medium, trans_source, trans_desc = translate_text(information['life_info'],
-                                                                                          information['title'],
-                                                                                          information['medium'],
-                                                                                          information['source'],
-                                                                                          information['description'],
-                                                                                          trans_source,
-                                                                                          trans_target)
+    trans_life_info, trans_title, trans_medium, trans_source, trans_desc = translate_text(
+        information['life_info'],
+        information['title'],
+        information['medium'],
+        information['source'],
+        information['description'],
+        trans_source,
+        trans_target
+    )
     print("------------------------------")
 
     # Printing translated description plaque to CLI

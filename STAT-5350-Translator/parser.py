@@ -13,43 +13,47 @@ Author:
     Magnus Miller
 
 Date Last Updated:
-    01/20/26
+    01/22/26
 '''
 
 # Importing Libraries
 import re
-from typing import Tuple, Dict, Any
+from typing import Dict, Any
 
 '''
-Parses raw OCR output into structured plaque fields.
-
+parse_text()
+Description:
+    Parses raw OCR output into structured plaque fields. Uses line-based parsing to extract
+    information in a typical museum plaque format: author name, life dates, artwork title,
+    year created, medium, source/credit line, and description.
 Args:
     raw_text (str) - The full text string returned from OCR
-    debug (bool) - If True, prints intermediate parsing steps
-
-Returns:
-    dict containing:
-        - 'author'          (str)
-        - 'life_info'       (str)     e.g. "1881–1973"
-        - 'title'           (str)
-        - 'year'            (str)     e.g. "1923" or "c. 1955–58"
-        - 'medium'          (str)
-        - 'source'          (str)     credit line / provenance
-        - 'description'     (str)
-        - 'parse_success'   (bool)    whether parsing looked reasonable
-        - 'raw_text'        (str)     original text for reference
+    debug (bool) - If True, prints intermediate parsing steps to console
+Return:
+    Dict[str, Any] - Dictionary containing the following keys:
+        - 'author' (str): Artist's name
+        - 'life_info' (str): Artist's life dates (e.g., "1881-1973")
+        - 'title' (str): Title of the artwork
+        - 'year' (str): Year artwork was created (e.g., "1923")
+        - 'medium' (str): Medium/materials used
+        - 'source' (str): Credit line/provenance
+        - 'description' (str): Description of the artwork
+        - 'parse_success' (bool): Whether parsing found all required fields
+        - 'raw_text' (str): Original unprocessed text for reference
 '''
-def parse_text(raw_text: str, debug: bool):
+def parse_text(raw_text: str, debug: bool) -> Dict[str, Any]:
     # Define information dictionary
-    information = {'author': '',
-                   'life_info': '',
-                   'title': '',
-                   'year': '',
-                   'medium': '',
-                   'source': '',
-                   'description': '',
-                   'parse_success': False,
-                   'raw_text': raw_text}
+    information: Dict[str, Any] = {
+        'author': '',
+        'life_info': '',
+        'title': '',
+        'year': '',
+        'medium': '',
+        'source': '',
+        'description': '',
+        'parse_success': False,
+        'raw_text': raw_text
+    }
     
     # Check if text has been passed
     if not raw_text.strip():
