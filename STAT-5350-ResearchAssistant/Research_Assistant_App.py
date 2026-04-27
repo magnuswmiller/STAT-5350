@@ -5,6 +5,7 @@ Research_Assistant_App.py
 '''
 
 # Import required libraries
+import rag
 import gradio as gr
 from config import OPENAI_CHAT_MODEL, USE_OPENAI
 from llm import active_embed_model, active_chat_model
@@ -32,8 +33,12 @@ def build_ui()->gr.Blocks:
             ingest_status = gr.Textbox(label="Status", lines=4, interactive=False)
             reset_button = gr.Button("Clear Documents", variant='stop')
 
-            # TODO Add ingest_button click event to handle file ingestion
-            # TODO add reset_button click event to handle clearing
+            ingest_button.click(fn=lambda files:rag.ingest_documents(files, active_embed_model),
+                                inputs=upload_box,
+                                outputs=ingest_status,)
+            reset_button.click(fn=rag.reset,
+                               outputs=ingest_status)
+
 
         # Q & A UI tab
         with gr.Tab("Q & A"):
