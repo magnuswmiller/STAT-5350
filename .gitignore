@@ -1,2 +1,5 @@
 # Ignore all .venv files
 .venv/
+
+# Ignore all pycache data
+STAT-5350-ResearchAssistant/__pycache__/
