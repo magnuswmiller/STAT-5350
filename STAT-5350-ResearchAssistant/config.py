@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Default configuration (override via .env)
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:1179")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL","http://localhost:11434/v1")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "llama3")
 USE_OPENAI = os.getenv("USE_OPENAI", "FALSE").lower() == "true"

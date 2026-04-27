@@ -36,27 +36,27 @@ def ingest_documents(files, embed_model_name:str) -> str:
                                    "full_text": full_text,
                                    "num_pages": num_pages,}
 
-    for chunk in chunk_text(full_text):
-        if not chunk.strip():
-            continue
+        for chunk in chunk_text(full_text):
+            if not chunk.strip():
+                continue
 
-        try:
-            embedding = embed(chunk)
-        except Exception as e:
-            return f"Error embedding text (is Ollama running?): {e}"
+            try:
+                embedding = embed(chunk)
+            except Exception as e:
+                return f"Error embedding text (is Ollama running?): {e}"
 
-        vector_db.append({"text":chunk,
-                          "embedding":embedding,
-                          "source": filename})
-    
-    new_files.append(filename)
+            vector_db.append({"text":chunk,
+                            "embedding":embedding,
+                            "source": filename})
+        
+        new_files.append(filename)
 
     if not new_files:
         return "All uploaded files have been ingested."
-    else:
-        (f"Ingested {len(new_files)} document(s): {', '.join(new_files)}\n"
-        f"   Total chunks in vector DB: {len(vector_db)}\n"
-        f"   Embedding model: {embed_model_name}")
+    
+    return (f"Ingested {len(new_files)} document(s): {', '.join(new_files)}\n"
+            f"   Total chunks in vector DB: {len(vector_db)}\n"
+            f"   Embedding model: {embed_model_name}")
 
 # Reset button actions: clear vector database and document data
 def reset() -> str:
