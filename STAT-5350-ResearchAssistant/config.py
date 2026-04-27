@@ -1,22 +1,11 @@
 '''
-Research_Assistant_App.py
+config.py
 
-*** TODO Add intro write-up here
+TODO Write summary here
 '''
-
-# Import required libraries
+# Import Libraries
 import os
-import re
-import math
-import json
-import tempfile
-import pypdf
-import gradio as gr
-from pathlib import Path
-from datetime import datetime
 from dotenv import load_dotenv
-from openai import OpenAI
-from fpdf import FPDF
 
 # Load .env file
 load_dotenv()
