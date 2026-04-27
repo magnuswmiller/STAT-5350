@@ -7,13 +7,10 @@ Research_Assistant_App.py
 # Import required libraries
 import gradio as gr
 from config import OPENAI_CHAT_MODEL, USE_OPENAI
+from llm import active_embed_model, active_chat_model
 
 # Build App UI
 def build_ui()->gr.Blocks:
-    # TODO add LLM backend selection
-    active_chat_model = "open ai chat"
-    active_embed_model = "nomic embed"
-
     backend_label = f"OpenAI ({OPENAI_CHAT_MODEL})" if USE_OPENAI else f"Ollama Chat: {active_chat_model} | Ollama Embeddings: {active_embed_model}"
 
     # Background UI
