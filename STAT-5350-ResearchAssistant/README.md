@@ -190,24 +190,25 @@ Navigate to http://localhost:7860 in your browser. The app will behave identical
 
 ## Usage Guide
 
-<!-- SCREENSHOT: Upload Tab -->
+![Ingest Image](./Screenshots/Ingestion.png)
 **Upload Documents**
 
 Drag and drop one or more PDF files into the upload box and click Ingest Files. The app will extract the text, split it into chunks, and embed each chunk. The status box will confirm how many documents were ingested and how many chunks are in the vector database. Note that large documents may take a moment to embed.
 
-<!-- SCREENSHOT: Q&A Tab -->
+![Q&A Image](./Screenshots/Q&A.png)
 **Q&A**
 
 Navigate to the Q&A tab and type your question into the input box. Click Send Question or press Enter. The app will retrieve the most relevant chunks from your documents and generate a grounded answer with source filenames cited. If no documents have been ingested, the app will prompt you to upload some first.
 
-<!-- SCREENSHOT: Summarize Tab -->
+![Summarize Image](./Screenshots/Summarize.png)
 **Summarize**
 
 Click Refresh File List to populate the dropdown with your ingested documents. Select a file and click Summarize Selected File for a single summary, or click Summarize All Files to generate summaries for everything in the vector database. Each summary includes the document title, author(s), date, and a short abstract-style paragraph.
 
-<!-- SCREENSHOT: Bibliography Tab -->
+![Bibliography Image](./Screenshots/Bibliography.png)
 **Create Bibliography**
 
 Click Generate Bibliography to extract citation metadata from all ingested documents and compile them into an alphabetically sorted APA 7th edition reference list. The formatted citations will appear in the app and a downloadable PDF will be available below the output.
 
 ---
+*NOTE: This README was generated using Claude based on provided code, design documents, and the final write-up*
