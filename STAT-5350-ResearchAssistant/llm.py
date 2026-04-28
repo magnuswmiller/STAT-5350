@@ -1,7 +1,8 @@
 '''
 llm.py
 
-TODO write summary here
+Initializes the LLM and embedding clients (Ollama or OpenAI) based on config, and exposes simple embed()
+and llm_chat() wrappers for use by other modules.
 '''
 
 # Importing Libraries

@@ -1,7 +1,8 @@
 '''
 rag.py
 
-TODO Write summary here
+Manages the in-memory vector database and RAG pipeline, including document ingestion, chunk embedding,
+semantic search, and state reset.
 '''
 
 # Import Libraries

@@ -1,7 +1,7 @@
 '''
 config.py
 
-TODO Write summary here
+Loads environment variables from the .env file and exposes them as constants for use across all other modules in the application.
 '''
 # Import Libraries
 import os
@@ -13,7 +13,7 @@ load_dotenv()
 # Default configuration (override via .env)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL","http://localhost:11434/v1")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
-CHAT_MODEL = os.getenv("CHAT_MODEL", "llama3")
+CHAT_MODEL = os.getenv("CHAT_MODEL", "llama3:8b")
 USE_OPENAI = os.getenv("USE_OPENAI", "FALSE").lower() == "true"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_EMBED_MODEL  = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small")

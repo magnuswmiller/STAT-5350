@@ -1,7 +1,8 @@
 '''
 utils.py
 
-TODO Write summary here
+Pure utility functions with no app state: text chunking, cosine similarity, PDF text extraction, APA citation
+formatting, and bibliography PDF generation.
 '''
 
 # Import libraries
@@ -37,11 +38,14 @@ def extract_pdf_text(file_path:str) -> tuple[str, int]:
     return "\n\n".join(p.strip() for p in pages), len(reader.pages)
 
 # Citatation formatting for APA 7th edition
-def format_apa(citation_data:dict, fallback_filename:str) -> str:
+def format_apa(citation_data: dict, fallback_filename: str) -> str:
     authors = citation_data.get("authors") or []
     title = citation_data.get("title") or fallback_filename
     year = citation_data.get("year") or "n.d."
     source = citation_data.get("source")
+    volume = citation_data.get("volume")
+    issue = citation_data.get("issue")
+    pages = citation_data.get("pages")
     url = citation_data.get("url")
 
     if not authors:
@@ -52,10 +56,17 @@ def format_apa(citation_data:dict, fallback_filename:str) -> str:
         author_str = ", ".join(authors[:-1]) + ", & " + authors[-1]
     else:
         author_str = ", ".join(authors[:19]) + ", ... " + authors[-1]
-    
-    citation = f"{author_str} ({year}). *{title}*."
+
+    citation = f"{author_str} ({year}). {title}."
     if source:
-        citation += f" {source}."
+        citation += f" *{source}*"
+        if volume:
+            citation += f", *{volume}*"
+            if issue:
+                citation += f"({issue})"
+        if pages:
+            citation += f", {pages}"
+        citation += "."
     if url:
         citation += f" {url}"
     return citation

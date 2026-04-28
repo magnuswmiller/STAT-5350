@@ -1,11 +1,13 @@
 '''
 Research_Assistant_App.py
 
-*** TODO Add intro write-up here
+Defines and launches the Gradio web UI, wiring together all tabs and user interactions to the
+underlying feature and RAG modules.
 '''
 
 # Import required libraries
 import rag
+import features
 import gradio as gr
 from config import OPENAI_CHAT_MODEL, USE_OPENAI
 from llm import active_embed_model, active_chat_model
@@ -50,9 +52,15 @@ def build_ui()->gr.Blocks:
                 send_button = gr.Button("Send Question", variant='primary', scale=1)
                 clear_button = gr.Button("Clear Chat")
             
-            # TODO Send button event handling
-            # TODO Question box handling
+            send_button.click(features.answer_question,
+                              inputs=[question_box, chatbot],
+                              outputs=[question_box, chatbot])
+            question_box.submit(features.answer_question,
+                                inputs=[question_box, chatbot],
+                                outputs=[question_box, chatbot])
             # TODO Clear button event handling
+            clear_button.click(fn=lambda: [],
+                               outputs=chatbot)
         
         # Summarization UI tab
         with gr.Tab("Summarize"):
@@ -66,9 +74,13 @@ def build_ui()->gr.Blocks:
                 summary_all_button = gr.Button("Summarize All Files")
             summary_out = gr.Markdown()
 
-            # TODO refresh_button event handling
-            # TODO summary_one_button event handling
-            # TODO summary_all_button event handling
+            refresh_button.click(fn=lambda: gr.Dropdown(choices=rag.get_document_list()),
+                                 outputs=document_dropdown)
+            summary_one_button.click(features.summarize_document,
+                                     inputs=document_dropdown,
+                                     outputs=summary_out)
+            summary_all_button.click(features.summarize_all,
+                                     outputs=summary_out)
 
         # Bibliography UI tab
         with gr.Tab("Create Bibliography"):
@@ -76,12 +88,13 @@ def build_ui()->gr.Blocks:
                         " Download the generated bibliography as a .pdf file.")
             biblio_button = gr.Button("Generate Bibliography")
             biblio_text = gr.Markdown()
-            biblio_pdf = gr.File(label="Download Bibliography", visible=False)
+            biblio_pdf = gr.File(label="Download Bibliography", visible=True, interactive=False)
 
             def on_bib_click():
-                # TODO Write features file
-                # text, pdf_path = features.create_bibliography()
-                return text, gr.File(value=pdf_path, visible=pdf_path is not None)
+                text, pdf_path = features.create_bibliography()
+                if pdf_path:
+                    return text, pdf_path
+                return text, None
  
             biblio_button.click(fn=on_bib_click, outputs=[biblio_text, biblio_pdf])
 
