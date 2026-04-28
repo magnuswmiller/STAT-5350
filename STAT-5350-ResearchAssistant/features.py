@@ -122,29 +122,3 @@ def create_bibliography() -> tuple[str, str | None]:
 
     print("Returning results...")
     return text_output, pdf_path
-# def create_bibliography() -> tuple[str, str | None]:
-#     if not rag.document_data:
-#         return "No documents ingested yet.", None
- 
-#     apa_lines = []
-#     failed = []
-#     for filename in rag.document_data:
-#         meta = _extract_citation(filename)
-#         if meta:
-#             apa_lines.append(format_apa(meta, filename))
-#         else:
-#             failed.append(filename)
-#             apa_lines.append(f"[Could not extract citation for: {filename}]")
- 
-#     apa_lines.sort()
-#     text_output = "**References**\n\n" + "\n\n".join(apa_lines)
- 
-#     if failed:
-#         text_output += f"\n\nCitation extraction failed for: {', '.join(failed)}"
- 
-#     try:
-#         pdf_path = build_bibliography(apa_lines)
-#     except Exception as e:
-#         return text_output + f"\n\nPDF generation error: {e}", None
- 
-#     return text_output, pdf_path
