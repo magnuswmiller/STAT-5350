@@ -1,5 +1,5 @@
 # Research Paper Assistant
-### STAT-5350 | Applied Deep Learning | University of Colorado Boulder
+### STAT-5350 | Applied Deep Learning
 ---
 
 <!-- SCREENSHOT: Full app overview — place a screenshot of the running app here -->
